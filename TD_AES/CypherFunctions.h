@@ -6,6 +6,7 @@
 
 
 void SubBytes(unsigned char ptr_stateTab[4][4]);
-void MixColumns(char** ptr_stateTab);
-void ShiftRows(char** ptr_stateTab);
-void AddRoundKey(char** ptr_stateTab, char** RoundKey);
+void MixColumns(unsigned char ptr_stateTab[4][4]);
+void ShiftRows(unsigned char ptr_stateTab[4][4]);
+void AddRoundKey(unsigned char ptr_stateTab[4][4], char** RoundKey);
+void print(unsigned char ptr_stateTab[4][4]);
