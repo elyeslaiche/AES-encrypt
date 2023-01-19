@@ -38,12 +38,6 @@ void ShiftRows(unsigned char ptr_stateTab[4][4]) {
 				temp = ptr_stateTab[i][j];
 				ptr_stateTab[i][j] = ptr_stateTab[i][(j + 1) % 4];
 				ptr_stateTab[i][(j + 1) % 4] = temp;
-				
-				if (i == 2) {
-					print(ptr_stateTab);
-
-					printf("------------\n");
-				}
 			}
 		}
 		
