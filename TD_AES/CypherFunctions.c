@@ -36,6 +36,7 @@ void SubBytes(unsigned char ptr_stateTab[4][4]) {
 		}
 	}
 }
+
 void MixColumns(unsigned char ptr_stateTab[4][4]) {
 	int temp;
 	unsigned char cpyTab[4][4];
@@ -75,6 +76,23 @@ void ShiftRows(unsigned char ptr_stateTab[4][4]) {
 	}
 }
 
+void InvShiftRows(unsigned char ptr_stateTab[4][4]) {
+	unsigned char temp;
+	for (int i = 1; i <= 3; i++) {
+		for (int k = 0; k < 4 - i; k++) {
+			for (int j = 0; j < 3; j++) {
+				temp = ptr_stateTab[i][(j + 1) % 4];
+				ptr_stateTab[i][(j + 1) % 4] = ptr_stateTab[i][j];
+				ptr_stateTab[i][j] = temp;
+				//printf("---------------\n");
+				//print(ptr_stateTab);
+			}
+			
+		}
+
+	}
+}
+
 void AddRoundKey(unsigned char ptr_stateTab[4][4], unsigned char RoundKey[4][4]) {
 
 	unsigned char cpyTab[4][4];
@@ -108,16 +126,29 @@ void calcNewRoundKey(unsigned char RoundKey[4][4], int Round) {
 	RoundKey[0][0] = (RoundKeyFirstColumn[0][0] ^ RoundKeyLastColumn[0][0]) ^ Rcon[0][Round];
 	RoundKey[1][0] = (RoundKeyFirstColumn[1][0] ^ RoundKeyLastColumn[1][0]) ^ 0x00;
 	RoundKey[2][0] = (RoundKeyFirstColumn[2][0] ^ RoundKeyLastColumn[2][0]) ^ 0x00;
-	RoundKey[3][0] = (RoundKeyFirstColumn[3][0] ^ RoundKeyLastColumn[3][0]) ^ 0x00;	
+	RoundKey[3][0] = (RoundKeyFirstColumn[3][0] ^ RoundKeyLastColumn[3][0]) ^ 0x00;
 	for (int i = 1; i <= 3; i++) {
 		RoundKey[0][i] = RoundKey[0][i] ^ RoundKey[0][i - 1];
 		RoundKey[1][i] = RoundKey[1][i] ^ RoundKey[1][i - 1];
 		RoundKey[2][i] = RoundKey[2][i] ^ RoundKey[2][i - 1];
 		RoundKey[3][i] = RoundKey[3][i] ^ RoundKey[3][i - 1];
 	}
-	//printf("Round: %i---------------\n", Round+1);
-	//print(RoundKey);
-	
+}
+
+void cypherEncrypt(unsigned char in[4][4], unsigned char key[4][4]) {
+	AddRoundKey(in, key);
+	calcNewRoundKey(key, 0);
+
+	for (int round = 1; round < 10; round++) {
+		SubBytes(in);
+		ShiftRows(in);
+		MixColumns(in);
+		AddRoundKey(in, key);
+		calcNewRoundKey(key, round);
+	}
+	SubBytes(in);
+	ShiftRows(in);
+	AddRoundKey(in, key);
 }
 
 
