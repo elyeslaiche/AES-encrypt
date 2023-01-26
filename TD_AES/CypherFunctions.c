@@ -88,6 +88,53 @@ void MixColumns(unsigned char ptr_stateTab[4][4]) {
 	}
 }
 
+void InvMixColumns(unsigned char ptr_stateTab[4][4]) {
+	int temp_3decal, temp_2decal, temp_1decal;
+	unsigned char cpyTab[4][4];
+
+	for (int i = 0; i <= 3; i++) {
+		for (int j = 0; j <= 3; j++) {
+			cpyTab[i][j] = ptr_stateTab[i][j];
+		}
+	}
+
+	for (int k = 0; k <= 3; k++) {
+		for (int i = 0; i <= 3; i++) {
+
+			temp_3decal = (cpyTab[i][k] ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k]);
+
+			for (int j = 0; j < 3; j++) {
+				if ((temp_3decal & 0x80) == 0x00) {
+					temp_3decal = temp_3decal << 1;
+				}
+				else {
+					temp_3decal = (temp_3decal << 1) ^ 0x11B;
+				}
+			}
+
+			temp_2decal = (cpyTab[i][k] ^ cpyTab[(i + 2) % 4][k]);
+
+			for (int j = 0; j < 2; j++) {
+				if ((temp_2decal & 0x80) == 0x00) {
+					temp_2decal = temp_2decal << 1;
+				}
+				else {
+					temp_2decal = (temp_2decal << 1) ^ 0x11B;
+				}
+			}
+
+			temp_1decal = (cpyTab[i][k] ^ cpyTab[(i + 1) % 4][k]);
+
+			if ((temp_1decal & 0x80) == 0x00) {
+				ptr_stateTab[i][k] = temp_3decal ^ temp_2decal ^ (temp_1decal << 1) ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k];
+			}
+			else {
+				ptr_stateTab[i][k] = temp_3decal ^ temp_2decal ^ ((temp_1decal << 1) ^ 0x11B) ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k];
+			}
+		}
+	}
+}
+
 void ShiftRows(unsigned char ptr_stateTab[4][4]) {
 	unsigned char temp;
 	for (int i = 1; i <= 3; i++) {
@@ -110,8 +157,6 @@ void InvShiftRows(unsigned char ptr_stateTab[4][4]) {
 				temp = ptr_stateTab[i][(j + 1) % 4];
 				ptr_stateTab[i][(j + 1) % 4] = ptr_stateTab[i][j];
 				ptr_stateTab[i][j] = temp;
-				//printf("---------------\n");
-				//print(ptr_stateTab);
 			}
 
 		}

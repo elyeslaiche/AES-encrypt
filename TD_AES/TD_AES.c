@@ -9,13 +9,16 @@ void main()
 	unsigned char key[4][4] = { {0xd6,0xd2 , 0xda, 0xd6}, {0xaa, 0xaf, 0xa6, 0xab} ,{0x74, 0x72, 0x78, 0x76}, {0xfd, 0xfa, 0xf1, 0xfe} };
 
 	//cypherEncrypt(in, key);
-	printf("---------------\n");
-	print(in);
 	SubBytes(in);
-	printf("---------------\n");
+	ShiftRows(in);
+	MixColumns(in);
+	AddRoundKey(in, key);
 	print(in);
+	printf("--------------\n");
+	AddRoundKey(in, key);
+	InvMixColumns(in);
+	InvShiftRows(in);
 	InvSubBytes(in);
-	printf("---------------\n");
 	print(in);
 
 }
