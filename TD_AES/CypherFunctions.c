@@ -21,6 +21,14 @@ unsigned char S_Box[16][16] = {
 		{0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16}
 };
 
+
+
+unsigned char Rcon[4][10] = {
+	{ 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} };
+
 void SubBytes(unsigned char ptr_stateTab[4][4]) {
 	for (int i = 0; i <= 3; i++) {
 		for (int j = 0; j <= 3; j++) {
@@ -47,7 +55,7 @@ void MixColumns(unsigned char ptr_stateTab[4][4]) {
 				ptr_stateTab[i][k] = (temp << 1) ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k];
 			}
 			else {
-				ptr_stateTab[i][k] = (((temp << 1)  ^ 0x11B) ) ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k];
+				ptr_stateTab[i][k] = (((temp << 1) ^ 0x11B)) ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k];
 			}
 		}
 	}
@@ -66,8 +74,52 @@ void ShiftRows(unsigned char ptr_stateTab[4][4]) {
 
 	}
 }
-void AddRoundKey(unsigned char ptr_stateTab[4][4], char** RoundKey) {
+
+void AddRoundKey(unsigned char ptr_stateTab[4][4], unsigned char RoundKey[4][4]) {
+
+	unsigned char cpyTab[4][4];
+
+	for (int i = 0; i <= 3; i++) {
+		for (int j = 0; j <= 3; j++) {
+			cpyTab[i][j] = ptr_stateTab[i][j];
+		}
+	}
+
+	for (int i = 0; i <= 3; i++) {
+		for (int j = 0; j <= 3; j++) {
+			ptr_stateTab[i][j] = cpyTab[i][j] ^ RoundKey[i][j];
+		}
+	}
+
+
 }
+
+void calcNewRoundKey(unsigned char RoundKey[4][4], int Round) {
+	unsigned char RoundKeyLastColumn[4][4] = { {RoundKey[1][3], 0x00, 0x00, 0x00},
+		{RoundKey[2][3], 0x00, 0x00, 0x00},
+		{RoundKey[3][3], 0x00, 0x00, 0x00},
+		{RoundKey[0][3], 0x00, 0x00, 0x00} };
+
+	unsigned char RoundKeyFirstColumn[4][4] = { {RoundKey[0][0], 0x00, 0x00, 0x00},
+		{RoundKey[1][0], 0x00, 0x00, 0x00},
+		{RoundKey[2][0], 0x00, 0x00, 0x00},
+		{RoundKey[3][0], 0x00, 0x00, 0x00} };
+	SubBytes(RoundKeyLastColumn);
+	RoundKey[0][0] = (RoundKeyFirstColumn[0][0] ^ RoundKeyLastColumn[0][0]) ^ Rcon[0][Round];
+	RoundKey[1][0] = (RoundKeyFirstColumn[1][0] ^ RoundKeyLastColumn[1][0]) ^ 0x00;
+	RoundKey[2][0] = (RoundKeyFirstColumn[2][0] ^ RoundKeyLastColumn[2][0]) ^ 0x00;
+	RoundKey[3][0] = (RoundKeyFirstColumn[3][0] ^ RoundKeyLastColumn[3][0]) ^ 0x00;	
+	for (int i = 1; i <= 3; i++) {
+		RoundKey[0][i] = RoundKey[0][i] ^ RoundKey[0][i - 1];
+		RoundKey[1][i] = RoundKey[1][i] ^ RoundKey[1][i - 1];
+		RoundKey[2][i] = RoundKey[2][i] ^ RoundKey[2][i - 1];
+		RoundKey[3][i] = RoundKey[3][i] ^ RoundKey[3][i - 1];
+	}
+	//printf("Round: %i---------------\n", Round+1);
+	//print(RoundKey);
+	
+}
+
 
 void print(unsigned char ptr_stateTab[4][4]) {
 	for (int i = 0; i <= 3; i++) {
