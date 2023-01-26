@@ -29,7 +29,30 @@ void SubBytes(unsigned char ptr_stateTab[4][4]) {
 	}
 }
 void MixColumns(unsigned char ptr_stateTab[4][4]) {
+	int temp;
+	unsigned char cpyTab[4][4];
+
+	for (int i = 0; i <= 3; i++) {
+		for (int j = 0; j <= 3; j++) {
+			cpyTab[i][j] = ptr_stateTab[i][j];
+		}
+	}
+
+	for (int k = 0; k <= 3; k++) {
+		for (int i = 0; i <= 3; i++) {
+
+			temp = (cpyTab[i][k] ^ cpyTab[(i + 1) % 4][k]);
+
+			if ((temp & 0x80) == 0x00) {
+				ptr_stateTab[i][k] = (temp << 1) ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k];
+			}
+			else {
+				ptr_stateTab[i][k] = (((temp << 1)  ^ 0x11B) ) ^ cpyTab[(i + 1) % 4][k] ^ cpyTab[(i + 2) % 4][k] ^ cpyTab[(i + 3) % 4][k];
+			}
+		}
+	}
 }
+
 void ShiftRows(unsigned char ptr_stateTab[4][4]) {
 	unsigned char temp;
 	for (int i = 1; i <= 3; i++) {
@@ -40,7 +63,7 @@ void ShiftRows(unsigned char ptr_stateTab[4][4]) {
 				ptr_stateTab[i][(j + 1) % 4] = temp;
 			}
 		}
-		
+
 	}
 }
 void AddRoundKey(unsigned char ptr_stateTab[4][4], char** RoundKey) {

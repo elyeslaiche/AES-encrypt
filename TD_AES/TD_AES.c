@@ -20,9 +20,10 @@ void main()
 		AddRoundKey(state, w);
 	}*/
 
-	SubBytes(in);
-	ShiftRows(in);
+	SubBytes(in);	//fctnel
+	ShiftRows(in); //fctnel
 	//AddRoundKey(state, w);
+	MixColumns(in);
 	//unsigned char out[][Nb] = state;
 	print(in);
 
