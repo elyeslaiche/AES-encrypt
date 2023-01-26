@@ -11,10 +11,10 @@ void main()
 	//cypherEncrypt(in, key);
 	printf("---------------\n");
 	print(in);
-	ShiftRows(in);
+	SubBytes(in);
 	printf("---------------\n");
 	print(in);
-	InvShiftRows(in);
+	InvSubBytes(in);
 	printf("---------------\n");
 	print(in);
 

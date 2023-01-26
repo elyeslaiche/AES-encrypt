@@ -5,6 +5,7 @@
 #define Nr 10
 
 void SubBytes(unsigned char ptr_stateTab[4][4]);
+void InvSubBytes(unsigned char ptr_stateTab[4][4]);
 void MixColumns(unsigned char ptr_stateTab[4][4]);
 void ShiftRows(unsigned char ptr_stateTab[4][4]);
 void InvShiftRows(unsigned char ptr_stateTab[4][4]);
