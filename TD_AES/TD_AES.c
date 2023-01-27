@@ -5,21 +5,33 @@
 
 void main()
 {
-	unsigned char in[][Nb] = { {0x00, 0x40, 0x80, 0xc0}, {0x10, 0x50, 0x90, 0xd0}, {0x20, 0x60, 0xa0, 0xce0}, {0x30, 0x70, 0xb0, 0xf0} };
-	unsigned char key[4][4] = { {0xd6,0xd2 , 0xda, 0xd6}, {0xaa, 0xaf, 0xa6, 0xab} ,{0x74, 0x72, 0x78, 0x76}, {0xfd, 0xfa, 0xf1, 0xfe} };
+	unsigned char in[][Nb] = { {0x32, 0x88, 0x31, 0xe0}, {0x43, 0x5a, 0x31, 0x37}, {0xf6, 0x30, 0x98, 0x07}, {0xa8, 0x8d, 0xa2, 0x34} };
+	unsigned char key[4][4] = { {0x2b, 0xd28, 0xab, 0x09}, {0x7e, 0xae, 0xf7, 0xcf}, {0x15, 0xd2, 0x15, 0x4f}, {0x16, 0xa6, 0x88, 0x3c} };
+	unsigned char allkeys[4][44];
 
-	//cypherEncrypt(in, key);
-	SubBytes(in);
-	ShiftRows(in);
-	MixColumns(in);
-	AddRoundKey(in, key);
 	print(in);
-	printf("--------------\n");
-	AddRoundKey(in, key);
-	InvMixColumns(in);
-	InvShiftRows(in);
-	InvSubBytes(in);
+	cypherEncrypt(allkeys, in, key);
+	printf("\n--------------------\n");
+	//print(in);
+	cypherDecrypt(allkeys, in, key);
+	printf("\n--------------------\n");
 	print(in);
+	
+	//print(in);
+	//SubBytes(in);
+	//ShiftRows(in);
+	//MixColumns(in);
+	//AddRoundKey(in,key);
+	//printf("\n--------------------\n");
+	//print(in); 
+	//AddRoundKey(in,key);
+	//InvMixColumns(in);
+	//InvShiftRows(in);
+	//InvSubBytes(in);
+	//printf("\n--------------------\n");
+	//print(in);
+	
+	
 
 }
 

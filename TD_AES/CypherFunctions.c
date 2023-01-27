@@ -40,7 +40,6 @@ unsigned char rsbox[16][16] ={
 		{0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d}
 };
 
-
 unsigned char Rcon[4][10] = {
 	{ 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
 	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -198,6 +197,7 @@ void calcNewRoundKey(unsigned char RoundKey[4][4], int Round) {
 	RoundKey[1][0] = (RoundKeyFirstColumn[1][0] ^ RoundKeyLastColumn[1][0]) ^ 0x00;
 	RoundKey[2][0] = (RoundKeyFirstColumn[2][0] ^ RoundKeyLastColumn[2][0]) ^ 0x00;
 	RoundKey[3][0] = (RoundKeyFirstColumn[3][0] ^ RoundKeyLastColumn[3][0]) ^ 0x00;
+
 	for (int i = 1; i <= 3; i++) {
 		RoundKey[0][i] = RoundKey[0][i] ^ RoundKey[0][i - 1];
 		RoundKey[1][i] = RoundKey[1][i] ^ RoundKey[1][i - 1];
@@ -206,20 +206,62 @@ void calcNewRoundKey(unsigned char RoundKey[4][4], int Round) {
 	}
 }
 
-void cypherEncrypt(unsigned char in[4][4], unsigned char key[4][4]) {
+void cypherEncrypt(unsigned char allKeys[4][44], unsigned char in[4][4], unsigned char key[4][4]) {
+
+	for (int i = 0; i <= 3; i++) {
+		for (int j = 0; j <= 3; j++) {
+			allKeys[i][j] = key[i][j];
+		}
+	}
 	AddRoundKey(in, key);
 	calcNewRoundKey(key, 0);
-
+	for (int i = 0; i <= 3; i++) {
+		for (int j = 0; j <= 3; j++) {
+			allKeys[i][4 + j] = key[i][j];
+		}
+	}
 	for (int round = 1; round < 10; round++) {
 		SubBytes(in);
 		ShiftRows(in);
 		MixColumns(in);
 		AddRoundKey(in, key);
 		calcNewRoundKey(key, round);
+		for (int i = 0; i <= 3; i++) {
+			for (int j = 0; j <= 3; j++) {
+				allKeys[i][4 * (round+1) + j] = key[i][j];
+			}
+		}
 	}
+
 	SubBytes(in);
 	ShiftRows(in);
 	AddRoundKey(in, key);
+}
+
+void cypherDecrypt(unsigned char allKeys[4][44], unsigned char in[4][4], unsigned char key[4][4]) {
+
+	AddRoundKey(in, key);
+	for (int i = 0; i <= 3; i++) {
+		for (int j = 0; j <= 3; j++) {
+			key[i][j] = allKeys[i][43 - 4 - (3-j)];
+		}
+	}
+	for (int round = 1 ; round < 10; round++) {
+		InvShiftRows(in);
+		InvSubBytes(in);		
+		AddRoundKey(in, key);
+		InvMixColumns(in);
+
+		for (int i = 0; i <= 3; i++) {
+			for (int j = 0; j <= 3; j++) {
+				key[i][j] = allKeys[i][43 - 4 * (round+1) - (3 - j)];
+			}
+		}
+	}
+
+	InvShiftRows(in);
+	InvSubBytes(in);
+	AddRoundKey(in, key);	
 }
 
 
