@@ -9,29 +9,15 @@ void main()
 	unsigned char key[4][4] = { {0x2b, 0xd28, 0xab, 0x09}, {0x7e, 0xae, 0xf7, 0xcf}, {0x15, 0xd2, 0x15, 0x4f}, {0x16, 0xa6, 0x88, 0x3c} };
 	unsigned char allkeys[4][44];
 
+	printf("Matrice de base:\n\n");
 	print(in);
 	cypherEncrypt(allkeys, in, key);
 	printf("\n--------------------\n");
-	//print(in);
+	printf("Matrice cryptee:\n\n");
+	print(in);
 	cypherDecrypt(allkeys, in, key);
 	printf("\n--------------------\n");
+	printf("Matrice decryptee:\n\n");
 	print(in);
-	
-	//print(in);
-	//SubBytes(in);
-	//ShiftRows(in);
-	//MixColumns(in);
-	//AddRoundKey(in,key);
-	//printf("\n--------------------\n");
-	//print(in); 
-	//AddRoundKey(in,key);
-	//InvMixColumns(in);
-	//InvShiftRows(in);
-	//InvSubBytes(in);
-	//printf("\n--------------------\n");
-	//print(in);
-	
-	
-
 }
 

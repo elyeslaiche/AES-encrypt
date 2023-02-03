@@ -21,7 +21,7 @@ unsigned char S_Box[16][16] = {
 		{0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16}
 };
 
-unsigned char rsbox[16][16] ={ 
+unsigned char rsbox[16][16] = {
 		{0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb},
 		{0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb},
 		{0x54, 0x7b, 0x94, 0x32, 0xa6, 0xc2, 0x23, 0x3d, 0xee, 0x4c, 0x95, 0x0b, 0x42, 0xfa, 0xc3, 0x4e},
@@ -178,8 +178,6 @@ void AddRoundKey(unsigned char ptr_stateTab[4][4], unsigned char RoundKey[4][4])
 			ptr_stateTab[i][j] = cpyTab[i][j] ^ RoundKey[i][j];
 		}
 	}
-
-
 }
 
 void calcNewRoundKey(unsigned char RoundKey[4][4], int Round) {
@@ -228,7 +226,7 @@ void cypherEncrypt(unsigned char allKeys[4][44], unsigned char in[4][4], unsigne
 		calcNewRoundKey(key, round);
 		for (int i = 0; i <= 3; i++) {
 			for (int j = 0; j <= 3; j++) {
-				allKeys[i][4 * (round+1) + j] = key[i][j];
+				allKeys[i][4 * (round + 1) + j] = key[i][j];
 			}
 		}
 	}
@@ -243,25 +241,25 @@ void cypherDecrypt(unsigned char allKeys[4][44], unsigned char in[4][4], unsigne
 	AddRoundKey(in, key);
 	for (int i = 0; i <= 3; i++) {
 		for (int j = 0; j <= 3; j++) {
-			key[i][j] = allKeys[i][43 - 4 - (3-j)];
+			key[i][j] = allKeys[i][43 - 4 - (3 - j)];
 		}
 	}
-	for (int round = 1 ; round < 10; round++) {
+	for (int round = 1; round < 10; round++) {
 		InvShiftRows(in);
-		InvSubBytes(in);		
+		InvSubBytes(in);
 		AddRoundKey(in, key);
 		InvMixColumns(in);
 
 		for (int i = 0; i <= 3; i++) {
 			for (int j = 0; j <= 3; j++) {
-				key[i][j] = allKeys[i][43 - 4 * (round+1) - (3 - j)];
+				key[i][j] = allKeys[i][43 - 4 * (round + 1) - (3 - j)];
 			}
 		}
 	}
 
 	InvShiftRows(in);
 	InvSubBytes(in);
-	AddRoundKey(in, key);	
+	AddRoundKey(in, key);
 }
 
 
